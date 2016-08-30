@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mapping',['mapkey'])
-  .factory('mapping', ['mapkey', function(mapkey){
+angular.module('mapping',[])
+  .factory('mapping', [function(){
     return{
       generateMap: function(lat, lng){
         let mapWrap = document.getElementById('map-wrap');
@@ -12,7 +12,7 @@ angular.module('mapping',['mapkey'])
         mapAppend.id = 'map';
         mapWrap.appendChild(mapAppend);
 
-        L.mapbox.accessToken = mapkey;
+        L.mapbox.accessToken = 'pk.eyJ1Ijoic21rcXA4IiwiYSI6ImNpcmtuZmh0YjAwMzZmZm04ZjF4ODU4NjQifQ.39jUUHq0jF4BzDD3gfxDOw';
         let newMap = L.mapbox.map(mapAppend, 'mapbox.streets').setView([lat,lng], 9);
       }
     }
