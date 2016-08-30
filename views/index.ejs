@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A bootstrap weather application">
+    <meta name="keywords" content="bootstrap, jQuery, html5, css3, mapbox, weatherunderground">
+
+    <link rel="icon" href="/images/Weather.png" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+    <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
+	  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+    <script src="/javascripts/angularApp.js"></script>
+    <script src="/javascripts/map.js"></script>
+    <script src="/javascripts/const.js"></script>
+  </head>
+  <body ng-app="weather" ng-controller="MainCtrl" ng-cloak>
+    <!-- TOP NAV BAR -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#"><i class="fa fa-bolt" aria-hidden="true"></i> Weather API</a>
+        <button type="button" id="toggle-btn" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar" ng-submit="newMap()">
+        <form class="navbar-form pull-right" id="search_form">
+          <input class="form-control" id="city" ng-model="city" type="text" name="city" placeholder="City..." />
+          <input class="form-control" id="state" ng-model="state" type="text" name="state" placeholder="State..." maxlength=2 />
+          <button type="submit" id="submit" class="btn btn-primary">Get Weather</button>
+        </form>
+      </div>
+    </nav>
+
+
+    <div class="container page-header">
+      <header id="header">
+          <h1 class="pull-left">
+            <span id="head-loc">{{map.info.location}}</span><span id="head-zip">({{map.info.zip}})</span>
+          </h1>
+          <span class="update" id="last-updated">{{map.info.observation_time}}</span>
+      </header>
+    </div>
+
+
+    <main class="container container-fluid">
+
+      <div class="col-lg-3 col-md-12 col-sm-12">
+        <div class="well options">
+          <span class="upper-head">OPTIONS</span>
+          <p class="side-btn" ng-class="{'bg-primary': map.selected === 'info'}"><a data-req="info" href="#/">Weather</a></p>
+          <p class="side-btn" ng-class="{'bg-primary': map.selected === 'forecast'}"><a data-req="forecast" href="#/forecast">Forecast</a></p>
+          <p class="side-btn" ng-class="{'bg-primary': map.selected === 'webcams'}"><a data-req="cams" href="#/webcams">Webcams</a></p>
+        </div>
+        <div id="map-wrap">
+          <div id="map">
+          </div>
+        </div>
+      </div>
+
+
+      <div class="wrapper">
+        <div class="col-lg-9 col-md-12 col-sm-12">
+          <div class="well clearfix" id="fixed-body">
+            <div class="header" id="time-header">
+               <span class="time"> <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="time">{{map.info.time}}</span></span><h1 class="h1-no-padding">Current Conditions</h1>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-12 col-sm-12" id="side-conditions">
+                <!-- SIDE CONDITIONS -->
+                  <div class="img-wrap-50">
+                    <img id="weather-icon" src="{{map.info.icon}}" alt="{{map.info.alt}}" />
+                    <strong id="weather-descrip" class="grey-bold">{{map.info.description}}</strong>
+                  </div>
+                  <p class="temp" id="temp">{{map.info.temp}}</p>
+                  <p class="feels-like">
+                    <span class="grey-bold"> <i class="fa fa-sun-o" aria-hidden="true"></i> Feels Like: <span id="feels-like">{{map.info.feels}}</span></span>
+                  </p>
+                  <p class="wind">
+                    <span class="grey-bold"> <i class="fa fa-globe" aria-hidden="true"></i> Wind: <span id="wind">{{map.info.wind}}</span></span>
+                  </p>
+                  <p class="lat">
+                    <span class="grey-bold"> <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i> Latitude: <span id="lat">{{map.info.lat}}</span></span>
+                  </p>
+                  <p class="lng">
+                    <span class="grey-bold"> <i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i> Longitude: <span id="lng">{{map.info.lng}}</span></span>
+                  </p>
+                  <p class="link">
+                    <span class="source"><i class="fa fa-external-link" aria-hidden="true"></i> <a id="external-link" target="_blank" href="{{map.info.ex_link}}">{{map.info.full_location}}</a></span>
+                  </p>
+              </div>
+              <div class="col-lg-8 table-div content-div">
+
+                <!-- INSERT VIEW -->
+                <ui-view></ui-view>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p class="pull-right">Powered By: <a target="_blank" href="http://www.wunderground.com"> Weather Underground </a><img class="img-50x50" src="http://icons.wxug.com/graphics/wu2/logo_130x80.png" alt="weather underground" /></p>
+      </div>
+    </footer>
+
+    <!-- ***TEMPLATES*** -->
+
+    <!-- WEATHER TEMPLATE -->
+    <script type="text/ng-template" id="/weather.html">
+        <!-- INFO TABLE -->
+        <table class="table table-content" id="info">
+          <tbody>
+            <tr class="temp-tr">
+              <td>Full</td>
+              <td id="fullDescrip">{{map.info.full_description}}</td>
+            </tr>
+            <tr class="temp-tr">
+              <td>Temperature</td>
+              <td id="tempDescrip">{{map.info.temp}}</td>
+            </tr>
+            <tr class="temp-tr">
+              <td>Duepoint</td>
+              <td id="dueDescrip">{{map.info.duepoint}}</td>
+            </tr>
+            <tr class="temp-tr">
+              <td>Windchill</td>
+              <td id="chillDescrip">{{map.info.windchill}}</td>
+            </tr>
+            <tr class="temp-tr">
+              <td>Precip Today</td>
+              <td id="rainDescrip">{{map.info.precipitation}}</td>
+            </tr>
+            <tr class="temp-tr">
+              <td>Rel Humity</td>
+              <td id="humidDescrip">{{map.info.humidity}}</td>
+            </tr>
+            <tr class="temp-tr">
+              <td>Elevation</td>
+              <td id="elevDescrip">{{map.info.elevation}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </script>
+
+    <!-- FORECAST -->
+    <script type="text/ng-template" id="/forecast.html">
+      <!-- *** THIS IS THE ONE WERE EACH WAS ACTUALLY USED W/ HANDLEBARS *** -->
+      <table class="table table-conent" id="forecast">
+        <thead>
+          <tr>
+            <td colspan=3>
+              <h3 class="forecast-head">3-DAY FORECAST</h3>
+            </td>
+          </tr>
+        </thead>
+        <tbody id="forecast-body">
+          <tr id="forecast-info">
+            <!-- {{#each this}} -->
+                <td ng-repeat="forecast in map.forecasts">
+                  <div class="forecast-head">
+                    <h6>{{forecast.month}} {{forecast.day}}, {{forecast.year}}</h6>
+                    <span id="high-{{forecast.index}}" class="temp-high">{{forecast.high}} H</span> | <span id="low-{{forecast.index}}" class="temp-low">{{forecast.low}} L</span>
+                  </div>
+                  <div class="forecast-body">
+                    <img src="{{forecast.icon}}" alt="{{forecast.tz}}" />
+                  </div>
+                  <div class="forecast-foot">
+                    Winds from {{forecast.wind_dir}} at {{forecast.wind_mph}} {{forecast.text}}
+                  </div>
+                </td>
+            <!-- {{/each}} -->
+          </tr>
+        </tbody>
+      </table>
+    </script>
+
+    <!-- WEBCAMS -->
+    <script type="text/ng-template" id="/webcams.html">
+      <table class="table table-content" id="cams">
+        <tbody>
+          <tr>
+            <td id="cam-img">
+              <div id="carousel-container" class="container col-lg-12 col-md-12 col-sm-12">
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                  <!-- Indicators -->
+                  <ol class="carousel-indicators">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                    <li data-target="#myCarousel" data-slide-to="3"></li>
+                  </ol>
+                  <!-- Wrapper for slides -->
+                  <div class="carousel-inner" role="listbox" id="inner-carousel" ng-cloak>
+                    <!-- {{#each this}} -->
+                      <div class="{{cam.class_name}}" ng-repeat="cam in map.cams">
+                        <img src="{{cam.image}}" alt="{{cam.city}} Webcams" />
+                      </div>
+                    <!-- {{/each}} -->
+                    </div>
+                    <!-- Left and right controls -->
+                    <a class="left carousel-control" data-target="#myCarousel" role="button" data-slide="prev">
+                      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                      <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" data-target="#myCarousel" role="button" data-slide="next">
+                      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                      <span class="sr-only">Next</span>
+                    </a>
+                  </div>
+                </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </script>
+
+  </body>
+</html>
