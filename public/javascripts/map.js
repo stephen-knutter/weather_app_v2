@@ -9,8 +9,7 @@ angular.module('mapping',['mapkey'])
         let mapAppend = document.createElement('div');
         mapAppend.id = 'map';
         mapWrap.appendChild(mapAppend);
-
-        // L.mapbox.accessToken = 'pk.eyJ1Ijoic21rcXA4IiwiYSI6ImNpcmtuZmh0YjAwMzZmZm04ZjF4ODU4NjQifQ.39jUUHq0jF4BzDD3gfxDOw';
+        
         L.mapbox.accessToken = mapkey;
         let newMap = L.mapbox.map(mapAppend, 'mapbox.streets').setView([lat,lng], 9);
       }

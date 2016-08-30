@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Stephen\'s Weather App', map_key: process.env.MAPKEY, weather_key: process.env.WEATHERKEY });
+  res.render('index', { title: 'Stephen\'s Weather App' });
 });
 
 module.exports = router;
