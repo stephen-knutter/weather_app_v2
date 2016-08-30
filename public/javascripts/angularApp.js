@@ -1,3 +1,5 @@
+'use strict';
+
 var app = angular.module('weather', ['ui.router', 'mapping']);
 
 app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){

@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('mapping',['mapkey'])
   .factory('mapping', ['mapkey', function(mapkey){
     return{
@@ -9,7 +11,7 @@ angular.module('mapping',['mapkey'])
         let mapAppend = document.createElement('div');
         mapAppend.id = 'map';
         mapWrap.appendChild(mapAppend);
-        
+
         L.mapbox.accessToken = mapkey;
         let newMap = L.mapbox.map(mapAppend, 'mapbox.streets').setView([lat,lng], 9);
       }
