@@ -21,7 +21,6 @@
     <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
     <script src="/javascripts/angularApp.js"></script>
     <script src="/javascripts/map.js"></script>
-    <!-- <script src="/javascripts/const.js"></script> -->
   </head>
   <body ng-app="weather" ng-controller="MainCtrl" ng-cloak>
     <!-- TOP NAV BAR -->
@@ -80,7 +79,7 @@
               <div class="col-lg-4 col-md-12 col-sm-12" id="side-conditions">
                 <!-- SIDE CONDITIONS -->
                   <div class="img-wrap-50">
-                    <img id="weather-icon" src="{{map.info.icon}}" alt="{{map.info.alt}}" />
+                    <img id="weather-icon" ng-src="{{map.info.icon}}" alt="{{map.info.alt}}" />
                     <strong id="weather-descrip" class="grey-bold">{{map.info.description}}</strong>
                   </div>
                   <p class="temp" id="temp">{{map.info.temp}}</p>
@@ -114,7 +113,7 @@
 
     <footer class="footer">
       <div class="container">
-        <p class="pull-right">Powered By: <a target="_blank" href="https://www.wunderground.com"> Weather Underground </a><img class="img-50x50" src="http://icons.wxug.com/graphics/wu2/logo_130x80.png" alt="weather underground" /></p>
+        <p class="pull-right">Powered By: <a target="_blank" href="https://www.wunderground.com"> Weather Underground </a><img class="img-50x50" src="https://icons.wxug.com/graphics/wu2/logo_130x80.png" alt="weather underground" /></p>
       </div>
     </footer>
 
@@ -178,7 +177,7 @@
                     <span id="high-{{forecast.index}}" class="temp-high">{{forecast.high}} H</span> | <span id="low-{{forecast.index}}" class="temp-low">{{forecast.low}} L</span>
                   </div>
                   <div class="forecast-body">
-                    <img src="{{forecast.icon}}" alt="{{forecast.tz}}" />
+                    <img ng-src="{{forecast.icon}}" alt="{{forecast.tz}}" />
                   </div>
                   <div class="forecast-foot">
                     Winds from {{forecast.wind_dir}} at {{forecast.wind_mph}} {{forecast.text}}
@@ -209,7 +208,7 @@
                   <div class="carousel-inner" role="listbox" id="inner-carousel" ng-cloak>
                     <!-- {{#each this}} -->
                       <div class="{{cam.class_name}}" ng-repeat="cam in map.cams">
-                        <img src="{{cam.image}}" alt="{{cam.city}} Webcams" />
+                        <img ng-src="{{cam.image}}" alt="{{cam.city}} Webcams" />
                       </div>
                     <!-- {{/each}} -->
                     </div>
