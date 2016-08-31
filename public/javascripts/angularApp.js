@@ -70,7 +70,7 @@ app.factory('getMap', ['$http', 'mapping', function($http, mapping){
       precip_today_string: '0.00 in (0 mm)',
       relative_humidity: '0%',
       forecast_url: '#',
-      icon_url: '#',
+      icon_url: '/images/Weather-48.png',
     },
     coords: {lat: 37.77493, lng: -122.419416},
     weather: [],
