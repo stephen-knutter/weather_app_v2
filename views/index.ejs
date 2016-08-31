@@ -46,7 +46,7 @@
     <div class="container page-header">
       <header id="header">
           <h1 class="pull-left">
-            <span id="head-loc">{{map.info.location}}</span><span id="head-zip">({{map.info.zip}})</span>
+            <span id="head-loc">{{map.info.display_location.full}}</span><span id="head-zip">({{map.info.display_location.zip}})</span>
           </h1>
           <span class="update" id="last-updated">{{map.info.observation_time}}</span>
       </header>
@@ -73,30 +73,30 @@
         <div class="col-lg-9 col-md-12 col-sm-12">
           <div class="well clearfix" id="fixed-body">
             <div class="header" id="time-header">
-               <span class="time"> <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="time">{{map.info.time}}</span></span><h1 class="h1-no-padding">Current Conditions</h1>
+               <span class="time"> <i class="fa fa-clock-o" aria-hidden="true"></i> <span id="time">{{map.info.local_time_rfc822}}</span></span><h1 class="h1-no-padding">Current Conditions</h1>
             </div>
             <div class="row">
               <div class="col-lg-4 col-md-12 col-sm-12" id="side-conditions">
                 <!-- SIDE CONDITIONS -->
                   <div class="img-wrap-50">
-                    <img id="weather-icon" ng-src="{{map.info.icon}}" alt="{{map.info.alt}}" />
-                    <strong id="weather-descrip" class="grey-bold">{{map.info.description}}</strong>
+                    <img id="weather-icon" ng-src="{{map.info.icon_url}}" alt="{{map.info.display_location.city}}, {{map.info.display_location.state}} Weather" />
+                    <strong id="weather-descrip" class="grey-bold">{{map.info.weather}}</strong>
                   </div>
-                  <p class="temp" id="temp">{{map.info.temp}}</p>
+                  <p class="temp" id="temp">{{map.info.temperature_string}}</p>
                   <p class="feels-like">
-                    <span class="grey-bold"> <i class="fa fa-sun-o" aria-hidden="true"></i> Feels Like: <span id="feels-like">{{map.info.feels}}</span></span>
+                    <span class="grey-bold"> <i class="fa fa-sun-o" aria-hidden="true"></i> Feels Like: <span id="feels-like">{{map.info.feelslike_string}}</span></span>
                   </p>
                   <p class="wind">
-                    <span class="grey-bold"> <i class="fa fa-globe" aria-hidden="true"></i> Wind: <span id="wind">{{map.info.wind}}</span></span>
+                    <span class="grey-bold"> <i class="fa fa-globe" aria-hidden="true"></i> Wind: <span id="wind">From the {{map.info.wind_dir}} {{map.info.wind_mph}} MPH</span></span>
                   </p>
                   <p class="lat">
-                    <span class="grey-bold"> <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i> Latitude: <span id="lat">{{map.info.lat}}</span></span>
+                    <span class="grey-bold"> <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i> Latitude: <span id="lat">{{map.info.observation_location.latitude}}</span></span>
                   </p>
                   <p class="lng">
-                    <span class="grey-bold"> <i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i> Longitude: <span id="lng">{{map.info.lng}}</span></span>
+                    <span class="grey-bold"> <i class="fa fa-arrow-circle-o-up" aria-hidden="true"></i> Longitude: <span id="lng">{{map.info.observation_location.longitude}}</span></span>
                   </p>
                   <p class="link">
-                    <span class="source"><i class="fa fa-external-link" aria-hidden="true"></i> <a id="external-link" target="_blank" href="{{map.info.ex_link}}">{{map.info.full_location}}</a></span>
+                    <span class="source"><i class="fa fa-external-link" aria-hidden="true"></i> <a id="external-link" target="_blank" href="{{map.info.forecast_url}}">{{map.info.display_location.full}}</a></span>
                   </p>
               </div>
               <div class="col-lg-8 table-div content-div">
@@ -126,31 +126,31 @@
           <tbody>
             <tr class="temp-tr">
               <td>Full</td>
-              <td id="fullDescrip">{{map.info.full_description}}</td>
+              <td id="fullDescrip">{{map.info.observation_location.full}}</td>
             </tr>
             <tr class="temp-tr">
               <td>Temperature</td>
-              <td id="tempDescrip">{{map.info.temp}}</td>
+              <td id="tempDescrip">{{map.info.temperature_string}}</td>
             </tr>
             <tr class="temp-tr">
               <td>Duepoint</td>
-              <td id="dueDescrip">{{map.info.duepoint}}</td>
+              <td id="dueDescrip">{{map.info.dewpoint_string}}</td>
             </tr>
             <tr class="temp-tr">
               <td>Windchill</td>
-              <td id="chillDescrip">{{map.info.windchill}}</td>
+              <td id="chillDescrip">{{map.info.windchill_string}}</td>
             </tr>
             <tr class="temp-tr">
               <td>Precip Today</td>
-              <td id="rainDescrip">{{map.info.precipitation}}</td>
+              <td id="rainDescrip">{{map.info.precip_today_string}}</td>
             </tr>
             <tr class="temp-tr">
               <td>Rel Humity</td>
-              <td id="humidDescrip">{{map.info.humidity}}</td>
+              <td id="humidDescrip">{{map.info.relative_humidity}}</td>
             </tr>
             <tr class="temp-tr">
               <td>Elevation</td>
-              <td id="elevDescrip">{{map.info.elevation}}</td>
+              <td id="elevDescrip">{{map.info.observation_location.elevation}}</td>
             </tr>
           </tbody>
         </table>
@@ -170,20 +170,18 @@
         </thead>
         <tbody id="forecast-body">
           <tr id="forecast-info">
-            <!-- {{#each this}} -->
-                <td ng-repeat="forecast in map.forecasts">
-                  <div class="forecast-head">
-                    <h6>{{forecast.month}} {{forecast.day}}, {{forecast.year}}</h6>
-                    <span id="high-{{forecast.index}}" class="temp-high">{{forecast.high}} H</span> | <span id="low-{{forecast.index}}" class="temp-low">{{forecast.low}} L</span>
-                  </div>
-                  <div class="forecast-body">
-                    <img ng-src="{{forecast.icon}}" alt="{{forecast.tz}}" />
-                  </div>
-                  <div class="forecast-foot">
-                    Winds from {{forecast.wind_dir}} at {{forecast.wind_mph}} {{forecast.text}}
-                  </div>
-                </td>
-            <!-- {{/each}} -->
+            <td ng-repeat="forecast in map.forecasts | limitTo: 3">
+              <div class="forecast-head">
+                <h6>{{forecast.date.monthname}} {{forecast.date.day}}, {{forecast.date.year}}</h6>
+                <span id="high-{{$index}}" class="temp-high">{{forecast.high.fahrenheit}} H</span> | <span id="low-{{$index}}" class="temp-low">{{forecast.low.fahrenheit}} L</span>
+              </div>
+              <div class="forecast-body">
+                <img ng-src="{{forecast.icon_url}}" alt="{{forecast.date.tz_long}}" />
+              </div>
+              <div class="forecast-foot">
+                Winds from {{forecast.avewind.dir}} at {{forecast.avewind.mph}} {{forecast.txt_obj.fcttext}}
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -206,11 +204,9 @@
                   </ol>
                   <!-- Wrapper for slides -->
                   <div class="carousel-inner" role="listbox" id="inner-carousel" ng-cloak>
-                    <!-- {{#each this}} -->
-                      <div class="{{cam.class_name}}" ng-repeat="cam in map.cams">
-                        <img ng-src="{{cam.image}}" alt="{{cam.city}} Webcams" />
+                      <div class="item" ng-class="{'active' : $index == 0}" ng-repeat="cam in map.cams | limitTo: 20">
+                        <img ng-src="{{cam.CURRENTIMAGEURL}}" alt="{{cam.city}} Webcams" />
                       </div>
-                    <!-- {{/each}} -->
                     </div>
                     <!-- Left and right controls -->
                     <a class="left carousel-control" data-target="#myCarousel" role="button" data-slide="prev">

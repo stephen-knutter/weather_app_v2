@@ -46,31 +46,37 @@ app.factory('getMap', ['$http', 'mapping', function($http, mapping){
     gotWebcams: false,
     gotMap: false,
     info: {
-      "location": 'Searching...',
-      "zip": '00000',
-      "observation_time": '00:00:00',
-      "time": '00:00:00',
-      "description": '...',
-      "temp": '0 F (0 C)',
-      "feels": '0 F (0 C)',
-      "wind": '0 MPH',
-      "lat": '00.000000',
-      "lng": '-000.000000',
-      "full_location": '...',
-      "full_description": '...',
-      "duepoint": '0 F (0 C)',
-      "windchill": 'N/A',
-      "precipitation": '0.00 in (0 mm)',
-      "humidity": '0%',
-      "elevation": '0 ft',
-      "ex_link": '#',
-      "icon": "",
-      "alt": "getting weather...",
-      "coords": {"lat": 37.77493, "lng": -122.419416}
+      display_location: {
+        full: 'Searching...',
+        zip: '00000',
+        city: '',
+        state: ''
+      },
+      observation_time: '00:00:00',
+      local_time_rfc822: '00:00:00',
+      weather: '...',
+      temperature_string: '0 F (0 C)',
+      feelslike_string: '0 F (0 C)',
+      wind_dir: '',
+      wind_mph: '0 MPH',
+      observation_location: {
+        latitude: '00.000000',
+        longitude: '-000.000000',
+        full: '...',
+        elevation: '0 ft'
+      },
+      dewpoint_string: '0 F (0 C)',
+      windchill_string: 'N/A',
+      precip_today_string: '0.00 in (0 mm)',
+      relative_humidity: '0%',
+      forecast_url: '#',
+      icon_url: '#',
     },
+    coords: {lat: 37.77493, lng: -122.419416},
     weather: [],
     cams: [],
-    forecasts: []
+    forecasts: [],
+    forecasts_txt: []
   };
 
   map.getLocation = function(page){
@@ -82,8 +88,8 @@ app.factory('getMap', ['$http', 'mapping', function($http, mapping){
         let lng = position.coords.longitude;
 
         if(lat && lng){
-          map.info.coords.lat = lat;
-          map.info.coords.lng = lng;
+          map.coords.lat = lat;
+          map.coords.lng = lng;
           map.reverseGeocode();
         } else {
           map.reverseGeocode();
@@ -97,7 +103,7 @@ app.factory('getMap', ['$http', 'mapping', function($http, mapping){
   };
 
   map.reverseGeocode = function(){
-    $http.get('/map/geocode?lat='+map.info.coords.lat+'&lng='+map.info.coords.lng)
+    $http.get('/map/geocode?lat='+map.coords.lat+'&lng='+map.coords.lng)
       .success(function(data){
         let geoData = data.features;
         let city = geoData[0].context[1].text;
@@ -147,30 +153,11 @@ app.factory('getMap', ['$http', 'mapping', function($http, mapping){
       } else {
         let weather = data.current_observation;
 
-        map.info.location = weather.display_location.full;
-        map.info.zip = weather.display_location.zip;
-        map.info.observation_time = weather.observation_time;
-        map.info.time = weather.local_time_rfc822;
-        map.info.description = weather.weather;
-        map.info.temp = weather.temperature_string;
-        map.info.feels = weather.feelslike_string;
-        map.info.wind = 'From the '+weather.wind_dir+' '+weather.wind_mph+' MPH';
-        map.info.lat = weather.observation_location.latitude;
-        map.info.lng = weather.observation_location.longitude;
-        map.info.full_location = weather.display_location.full;
-        map.info.full_description = weather.observation_location.full;
-        map.info.duepoint = weather.dewpoint_string;
-        map.info.windchill = weather.windchill_string;
-        map.info.precipitation = weather.precip_today_string;
-        map.info.humidity = weather.relative_humidity;
-        map.info.elevation = weather.observation_location.elevation;
-        map.info.ex_link = weather.forecast_url;
-        map.info.icon = weather.icon_url;
-        map.info.alt = weather.display_location.city+', '+weather.display_location.state+' Weather';
+        map.info = weather;
 
         if(!map.gotMap){
           map.gotMap = true;
-          mapping.generateMap(map.info.lat, map.info.lng);
+          mapping.generateMap(map.info.observation_location.latitude, map.info.observation_location.longitude);
         }
       }
     })
@@ -179,30 +166,13 @@ app.factory('getMap', ['$http', 'mapping', function($http, mapping){
   map.forecast = function(state, city){
     $http.get('/weather/'+state+'/'+city+'/forecast').success(function(data){
       map.gotForecast = true;
-      map.forecasts = [];
 
-      let forecast = data.forecast.simpleforecast.forecastday;
-      let txt = data.forecast.txt_forecast.forecastday;
+      map.forecasts = data.forecast.simpleforecast.forecastday;
+      map.forecasts_txt = data.forecast.txt_forecast.forecastday;
 
-      for(var i=0; i<3; i++){
-        let current = forecast[i];
-
-        let items = {
-          index: i,
-          conditions: current.conditions,
-          tz: current.date.tz_long,
-          month: current.date.monthname,
-          day: current.date.day,
-          year: current.date.year,
-          high: current.high.fahrenheit,
-          low: current.low.fahrenheit,
-          icon: current.icon_url,
-          wind_dir: current.avewind.dir,
-          wind_mph: current.avewind.mph,
-          text: txt[i].fcttext
-        };
-
-        map.forecasts.push(items);
+      for(var i=0; i<map.forecasts.length; i++){
+        let current = map.forecasts[i];
+        current.txt_obj = map.forecasts_txt[i];
       }
     });
   };
@@ -210,30 +180,7 @@ app.factory('getMap', ['$http', 'mapping', function($http, mapping){
   map.webcams = function(state, city){
     $http.get('/weather/'+state+'/'+city+'/webcams').success(function(data){
       map.gotWebcams = true;
-      map.cams = [];
-
-      let webcams  = data.webcams;
-
-      let count = 0;
-      for(var i in webcams){
-        let className = 'item';
-
-        if(i == 0){
-          className += ' active';
-        }
-
-        let current = webcams[i];
-
-        if(count <= 10){
-          let items = {
-            image: current.CURRENTIMAGEURL,
-            city: current.city,
-            class_name: className
-          }
-          map.cams.push(items)
-          count++;
-        }
-      }
+      map.cams = data.webcams;
     })
   };
 
