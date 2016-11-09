@@ -1,8 +1,8 @@
 # Weather App
 
-## powered by Weatherunderground & Mapbox APIs
+## powered by WeatherUnderground & Mapbox APIs
 
-Built using: `Angular.js` `Node.js` `Express.js` `Bootstrap` `CSS3` `HTML5`
+Built using: `Angular.js` `Node.js` `Express` `Bootstrap` `CSS3` `HTML5`
 
 The Weather App will find your location and display general weather informartion, a 3-day forecast, and webcams for the area.
 
