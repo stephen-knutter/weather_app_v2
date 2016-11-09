@@ -1,6 +1,6 @@
 # Weather App
 
-## powered by Weatherunderground & Mapbox
+## powered by Weatherunderground & Mapbox APIs
 
 Built using: `Bootstrap` `Angular.js` `Node.js` `Express.js` `CSS3` `HTML5`
 
